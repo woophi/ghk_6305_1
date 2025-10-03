@@ -1,13 +1,16 @@
 import { AmountInput } from '@alfalab/core-components/amount-input';
+import { BottomSheet } from '@alfalab/core-components/bottom-sheet';
 import { ButtonMobile } from '@alfalab/core-components/button/mobile';
 import { CalendarMobile } from '@alfalab/core-components/calendar/mobile';
 import { Divider } from '@alfalab/core-components/divider';
 import { Gap } from '@alfalab/core-components/gap';
 import { Input } from '@alfalab/core-components/input';
+import { Spinner } from '@alfalab/core-components/spinner';
 import { Status } from '@alfalab/core-components/status';
 import { Typography } from '@alfalab/core-components/typography';
 import { CalendarMIcon } from '@alfalab/icons-glyph/CalendarMIcon';
 import { ChevronLeftMIcon } from '@alfalab/icons-glyph/ChevronLeftMIcon';
+import { ChevronRightMIcon } from '@alfalab/icons-glyph/ChevronRightMIcon';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import checkedImg from './assets/checked.svg';
@@ -36,6 +39,17 @@ const productTypeToTitle: Record<ProductType, string> = {
   [ProductType.IIS_A]: 'ИИС тип А',
   [ProductType.IIS_Base]: 'ИИС (базовая)',
 };
+
+const productTypeToLink: Record<ProductType, string> = {
+  [ProductType.Deposit]: 'alfabank://deposits_opening',
+  [ProductType.Obligations]: 'Облигации',
+  [ProductType.Stocks]: 'Акции',
+  [ProductType.Gold]: 'Золото',
+  [ProductType.Piggy]: 'alfabank://investments/open_investments_account?type=BS',
+  [ProductType.IIS_A]: 'alfabank://investments/open_investments_account?type=IIS',
+  [ProductType.IIS_Base]: 'alfabank://accounts_opening_details?accountType=IY&conditions=BASIC',
+};
+
 const getKeys = Object.keys as <T extends object>(obj: T) => Array<keyof T>;
 
 const calcByProductType = {
@@ -52,6 +66,7 @@ const LINK = 'alfabank://investments/open_investments_account?type=BS';
 
 export const App = () => {
   const [loading, setLoading] = useState(false);
+  const [openBs, setOpenBs] = useState(false);
   const [sum, setSum] = useState(10000);
   const [error, setError] = useState<string | null>(null);
   const [periodError, setPeriodError] = useState<string | null>(null);
@@ -94,15 +109,18 @@ export const App = () => {
     setView('calc');
   };
 
-  const submit = () => {
-    setLoading(true);
+  const goToSelectProduct = () => {
+    setOpenBs(true);
     window.gtag('event', '6305_calculate');
+  };
+  const selectProductSubmit = (product: ProductType) => {
+    setLoading(true);
     sendDataToGA({
       sum,
       period: `${dayjs(calendarValue.dateFrom).format('DD.MM.YYYY')} - ${dayjs(calendarValue.dateTo).format('DD.MM.YYYY')}`,
-      product: selectedProducts.map(p => productTypeToTitle[p]).join(', '),
+      product: productTypeToTitle[product],
     }).then(() => {
-      window.location.replace(LINK);
+      window.location.replace(productTypeToLink[product]);
     });
   };
 
@@ -210,10 +228,37 @@ export const App = () => {
           >
             <ChevronLeftMIcon width={24} height={24} />
           </ButtonMobile>
-          <ButtonMobile block view="primary" size={56} onClick={submit} loading={loading}>
+          <ButtonMobile block view="primary" size={56} onClick={goToSelectProduct} loading={loading}>
             Открыть продукт
           </ButtonMobile>
         </div>
+
+        <BottomSheet
+          hasCloser
+          stickyHeader
+          open={openBs}
+          onClose={() => setOpenBs(false)}
+          title="Выберите продукт"
+          contentClassName={appSt.btmContent}
+        >
+          <div className={appSt.container}>
+            {selectedProducts.map(product => (
+              <div
+                key={product}
+                className={appSt.cell({})}
+                onClick={() => {
+                  if (!loading) {
+                    selectProductSubmit(product);
+                  }
+                }}
+              >
+                <Typography.Text view="primary-medium">{productTypeToTitle[product]}</Typography.Text>
+                <ChevronRightMIcon />
+              </div>
+            ))}
+            {loading ? <Spinner style={{ margin: '0 auto', height: '24px' }} visible preset={24} /> : <Gap size={24} />}
+          </div>
+        </BottomSheet>
       </>
     );
   }

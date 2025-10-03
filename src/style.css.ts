@@ -57,10 +57,15 @@ const row = style({
   justifyContent: 'space-between',
 });
 
+const btmContent = style({
+  padding: 0,
+});
+
 export const appSt = {
   bottomBtn,
   container,
   row,
   cell,
   box,
+  btmContent,
 };
