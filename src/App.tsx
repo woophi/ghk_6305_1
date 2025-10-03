@@ -62,8 +62,6 @@ const calcByProductType = {
   [ProductType.IIS_Base]: calcIISBase,
 };
 
-const LINK = 'alfabank://investments/open_investments_account?type=BS';
-
 export const App = () => {
   const [loading, setLoading] = useState(false);
   const [openBs, setOpenBs] = useState(false);
