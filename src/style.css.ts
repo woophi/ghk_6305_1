@@ -11,6 +11,13 @@ const bottomBtn = style({
   alignItems: 'center',
   gap: '8px',
   backgroundColor: '#FFFFFF',
+  '@media': {
+    'screen and (min-width: 768px)': {
+      maxWidth: '50%',
+      left: '50%',
+      transform: 'translateX(-50%)',
+    },
+  },
 });
 
 const container = style({
@@ -19,6 +26,18 @@ const container = style({
   flexDirection: 'column',
   gap: '1rem',
 });
+
+const desktopWrap = style([
+  container,
+  {
+    '@media': {
+      'screen and (min-width: 768px)': {
+        maxWidth: '50%',
+        margin: '0 auto',
+      },
+    },
+  },
+]);
 
 const cell = recipe({
   base: {
@@ -68,4 +87,5 @@ export const appSt = {
   cell,
   box,
   btmContent,
+  desktopWrap,
 };

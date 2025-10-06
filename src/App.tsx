@@ -146,7 +146,7 @@ export const App = () => {
     );
     return (
       <>
-        <div className={appSt.container}>
+        <div className={appSt.desktopWrap}>
           <Typography.TitleResponsive style={{ marginTop: '1rem' }} tag="h1" view="medium" font="system" weight="medium">
             Рассчет
           </Typography.TitleResponsive>
@@ -263,7 +263,7 @@ export const App = () => {
 
   return (
     <>
-      <div className={appSt.container}>
+      <div className={appSt.desktopWrap}>
         <Typography.TitleResponsive style={{ marginTop: '1rem' }} tag="h1" view="medium" font="system" weight="medium">
           Сравните доходность инвестиций за минуту
         </Typography.TitleResponsive>
